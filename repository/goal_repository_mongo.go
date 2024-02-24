@@ -9,7 +9,7 @@ type GoalRepositoryMongo struct {
 	dbClient *mongo.Client
 }
 
-func NewGoalRepositoryMongo(dbClient *mongo.Client) *GoalRepositoryMongo {
+func NewGoalRepositoryMongo(dbClient *mongo.Client, collectionName string) *GoalRepositoryMongo {
 	return &GoalRepositoryMongo{
 		dbClient: dbClient,
 	}

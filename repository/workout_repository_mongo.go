@@ -9,7 +9,7 @@ type WorkoutRepositoryMongo struct {
 	dbClient *mongo.Client
 }
 
-func NewWorkoutRepositoryMongo(dbClient *mongo.Client) *WorkoutRepositoryMongo {
+func NewWorkoutRepositoryMongo(dbClient *mongo.Client, collectionName string) *WorkoutRepositoryMongo {
 	return &WorkoutRepositoryMongo{
 		dbClient: dbClient,
 	}

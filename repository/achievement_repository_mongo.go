@@ -9,7 +9,7 @@ type AchievementRepositoryMongo struct {
 	dbClient *mongo.Client
 }
 
-func NewAchievementRepositoryMongo(dbClient *mongo.Client) *AchievementRepositoryMongo {
+func NewAchievementRepositoryMongo(dbClient *mongo.Client, collectionName string) *AchievementRepositoryMongo {
 	return &AchievementRepositoryMongo{
 		dbClient: dbClient,
 	}

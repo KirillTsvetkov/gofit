@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/KirillTsvetkov/gofit/models"
+	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -53,8 +54,8 @@ type Repository struct {
 
 func NewRepository(dbClient *mongo.Client) *Repository {
 	return &Repository{
-		WorkoutRepository:     NewWorkoutRepositoryMongo(dbClient),
-		AchievementRepository: NewAchievementRepositoryMongo(dbClient),
-		GoalRepository:        NewGoalRepositoryMongo(dbClient),
+		WorkoutRepository:     NewWorkoutRepositoryMongo(dbClient, viper.GetString("mongo.workout_collection")),
+		AchievementRepository: NewAchievementRepositoryMongo(dbClient, viper.GetString("mongo.achievement_collection")),
+		GoalRepository:        NewGoalRepositoryMongo(dbClient, viper.GetString("mongo.goal_collection")),
 	}
 }
