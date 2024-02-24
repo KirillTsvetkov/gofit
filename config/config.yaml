@@ -1,0 +1,9 @@
+port: "8080"
+
+mongo:
+  uri: "mongodb://user:password@mongo:27017/"
+  name: "development"
+  workout_collection: "workouts"
+  achievement_collection: "achievements"
+  goal_collection: "goals"
+  user_collection: "users"
