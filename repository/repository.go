@@ -1,6 +1,9 @@
 package repository
 
-import "github.com/KirillTsvetkov/gofit/models"
+import (
+	"github.com/KirillTsvetkov/gofit/models"
+	"go.mongodb.org/mongo-driver/mongo"
+)
 
 type WorkoutRepository interface {
 	CreateWorkout(workout models.Workout) (string, error)
@@ -43,4 +46,15 @@ type GoalRepository interface {
 }
 
 type Repository struct {
+	WorkoutRepository
+	AchievementRepository
+	GoalRepository
+}
+
+func NewRepository(dbClient *mongo.Client) *Repository {
+	return &Repository{
+		WorkoutRepository:     NewWorkoutRepositoryMongo(dbClient),
+		AchievementRepository: NewAchievementRepositoryMongo(dbClient),
+		GoalRepository:        NewGoalRepositoryMongo(dbClient),
+	}
 }
