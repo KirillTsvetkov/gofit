@@ -6,17 +6,17 @@ import (
 )
 
 type AchievementRepositoryMongo struct {
-	dbClient *mongo.Client
+	db *mongo.Collection
 }
 
-func NewAchievementRepositoryMongo(dbClient *mongo.Client, collectionName string) *AchievementRepositoryMongo {
+func NewAchievementRepositoryMongo(dbClient *mongo.Database, collectionName string) *AchievementRepositoryMongo {
 	return &AchievementRepositoryMongo{
-		dbClient: dbClient,
+		db: dbClient.Collection(collectionName),
 	}
 }
 
-func (rep *AchievementRepositoryMongo) CreateAchievement(achievement models.Achievement) (string, error) {
-	return "temp", nil
+func (rep *AchievementRepositoryMongo) CreateAchievement(achievement models.Achievement) (models.Achievement, error) {
+	return achievement, nil
 }
 
 func (rep *AchievementRepositoryMongo) GetAchievementById(id string) (models.Achievement, error) {
@@ -24,8 +24,8 @@ func (rep *AchievementRepositoryMongo) GetAchievementById(id string) (models.Ach
 	return achievement, nil
 }
 
-func (rep *AchievementRepositoryMongo) UpdateAchievement(achievement models.Achievement) error {
-	return nil
+func (rep *AchievementRepositoryMongo) UpdateAchievement(achievement models.Achievement) (models.Achievement, error) {
+	return achievement, nil
 }
 
 func (rep *AchievementRepositoryMongo) DeleteAchievement(id string) error {

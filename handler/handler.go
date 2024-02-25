@@ -21,13 +21,6 @@ func (h *Handler) IniteRoutes() *gin.Engine {
 		users.GET("/:id/records", h.getRecordsUserById)
 	}
 
-	schedules := router.Group("/schedules")
-	{
-		schedules.GET("/", h.getSchedule)
-		schedules.POST("/", h.getSchedule)
-		schedules.PUT("/", h.getSchedule)
-	}
-
 	records := router.Group("/achievements")
 	{
 		records.POST("/", h.getAchievements)

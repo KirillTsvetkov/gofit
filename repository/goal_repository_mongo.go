@@ -6,17 +6,17 @@ import (
 )
 
 type GoalRepositoryMongo struct {
-	dbClient *mongo.Client
+	db *mongo.Collection
 }
 
-func NewGoalRepositoryMongo(dbClient *mongo.Client, collectionName string) *GoalRepositoryMongo {
+func NewGoalRepositoryMongo(dbClient *mongo.Database, collectionName string) *GoalRepositoryMongo {
 	return &GoalRepositoryMongo{
-		dbClient: dbClient,
+		db: dbClient.Collection(collectionName),
 	}
 }
 
-func (rep *GoalRepositoryMongo) CreateGoal(goal models.Goal) (string, error) {
-	return "temp", nil
+func (rep *GoalRepositoryMongo) CreateGoal(goal models.Goal) (models.Goal, error) {
+	return goal, nil
 }
 
 func (rep *GoalRepositoryMongo) GetGoalById(id string) (models.Goal, error) {
@@ -24,8 +24,8 @@ func (rep *GoalRepositoryMongo) GetGoalById(id string) (models.Goal, error) {
 	return goal, nil
 }
 
-func (rep *GoalRepositoryMongo) UpdateGoal(goal models.Goal) error {
-	return nil
+func (rep *GoalRepositoryMongo) UpdateGoal(goal models.Goal) (models.Goal, error) {
+	return goal, nil
 }
 
 func (rep *GoalRepositoryMongo) DeleteGoal(id string) error {
