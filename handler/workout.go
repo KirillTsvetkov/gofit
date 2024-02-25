@@ -1,13 +1,22 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
-func (h *Handler) getWorkouts(c *gin.Context) {
-
+type WorkoutHandler struct {
 }
 
-func (h *Handler) getWorkoutById(c *gin.Context) {
+func NewHandler() *WorkoutHandler {
+	return &WorkoutHandler{}
+}
+
+func (h *WorkoutHandler) GetWorkouts(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"message": "Hi"})
+}
+
+func (h *WorkoutHandler) GetWorkoutById(c *gin.Context) {
 
 }

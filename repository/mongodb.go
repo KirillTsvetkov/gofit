@@ -7,11 +7,12 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func NewMongoDBClient() (*mongo.Client, error) {
+func NewMongoDBClient() (*mongo.Database, error) {
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found")
 	}
@@ -30,5 +31,5 @@ func NewMongoDBClient() (*mongo.Client, error) {
 		return nil, err
 	}
 
-	return client, nil
+	return client.Database(viper.GetString("mongo.db_name")), nil
 }

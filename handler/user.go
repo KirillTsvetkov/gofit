@@ -6,14 +6,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *Handler) me(c *gin.Context) {
+type UserHander struct {
+}
+
+func (h *UserHander) Me(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Hi"})
 }
 
-func (h *Handler) getUserById(c *gin.Context) {
+func (h *UserHander) GetUserById(c *gin.Context) {
 
 }
 
-func (h *Handler) getRecordsUserById(c *gin.Context) {
+func (h *UserHander) GetRecordsUserById(c *gin.Context) {
 
 }

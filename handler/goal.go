@@ -4,10 +4,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *Handler) getGoals(c *gin.Context) {
+type GoalHander struct {
+}
+
+func (h *GoalHander) Me(c *gin.Context) {
 
 }
 
-func (h *Handler) getGoalById(c *gin.Context) {
+func (h *GoalHander) GetGoals(c *gin.Context) {
+
+}
+
+func (h *GoalHander) GetGoalById(c *gin.Context) {
 
 }
