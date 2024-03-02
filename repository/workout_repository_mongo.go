@@ -40,15 +40,15 @@ func (rep *WorkoutRepositoryMongo) GetWorkoutById(ctx context.Context, id string
 	return workout, nil
 }
 
-func (rep *WorkoutRepositoryMongo) UpdateWorkout(workout models.Workout) (*models.Workout, error) {
+func (rep *WorkoutRepositoryMongo) UpdateWorkout(ctx context.Context, workout models.Workout) (*models.Workout, error) {
 	return &workout, nil
 }
 
-func (rep *WorkoutRepositoryMongo) DeleteWorkout(id string) error {
+func (rep *WorkoutRepositoryMongo) DeleteWorkout(ctx context.Context, id string) error {
 	return nil
 }
 
-func (rep *WorkoutRepositoryMongo) ListWorkoutsByUserId(userId int) ([]models.Workout, error) {
+func (rep *WorkoutRepositoryMongo) ListWorkoutsByUserId(ctx context.Context, userId int) ([]models.Workout, error) {
 	var workouts []models.Workout
 	return workouts, nil
 }

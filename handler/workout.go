@@ -3,10 +3,12 @@ package handler
 import (
 	"net/http"
 
+	"github.com/KirillTsvetkov/gofit/repository"
 	"github.com/gin-gonic/gin"
 )
 
 type WorkoutHandler struct {
+	Rep *repository.Repository
 }
 
 func NewHandler() *WorkoutHandler {

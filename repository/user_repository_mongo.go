@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/KirillTsvetkov/gofit/models"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -15,24 +17,24 @@ func NewUserRepositoryMongo(dbClient *mongo.Database, collectionName string) *Us
 	}
 }
 
-func (rep *UserRepositoryMongo) CreateUser(user models.User) (models.User, error) {
-	return user, nil
+func (rep *UserRepositoryMongo) CreateUser(ctx context.Context, user models.User) (*models.User, error) {
+	return &user, nil
 }
 
-func (rep *UserRepositoryMongo) GetUserByID(id string) (models.User, error) {
+func (rep *UserRepositoryMongo) GetUserByID(ctx context.Context, id string) (*models.User, error) {
 	var user models.User
-	return user, nil
+	return &user, nil
 }
 
-func (rep *UserRepositoryMongo) UpdateUser(user models.User) (models.User, error) {
-	return user, nil
+func (rep *UserRepositoryMongo) UpdateUser(ctx context.Context, user models.User) (*models.User, error) {
+	return &user, nil
 }
 
-func (rep *UserRepositoryMongo) DeleteUser(id string) error {
+func (rep *UserRepositoryMongo) DeleteUser(ctx context.Context, id string) error {
 	return nil
 }
 
-func (rep *UserRepositoryMongo) ListUsers() ([]models.User, error) {
+func (rep *UserRepositoryMongo) ListUsers(ctx context.Context) ([]models.User, error) {
 	var users []models.User
 	return users, nil
 }

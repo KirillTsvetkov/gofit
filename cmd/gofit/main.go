@@ -19,6 +19,7 @@ func main() {
 	dbClient, _ := repository.NewMongoDBClient()
 
 	rep := repository.NewRepository(dbClient)
+
 	router := new(router.Router)
 	srv := new(gofit.Server)
 	if err := srv.Run(viper.GetString("port"), router.IniteRoutes(rep)); err != nil {

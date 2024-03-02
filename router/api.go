@@ -12,16 +12,16 @@ func (r *Router) IniteRoutes(rep *repository.Repository) *gin.Engine {
 	router := gin.New()
 
 	userRouter := new(UserRouter)
-	userRouter.RegisterRoutes(router)
+	userRouter.RegisterRoutes(router, rep)
 
 	workoutRouter := new(WorkoutRouter)
-	workoutRouter.RegisterRoutes(router)
+	workoutRouter.RegisterRoutes(router, rep)
 
 	goalRouter := new(GoalRouter)
-	goalRouter.RegisterRoutes(router)
+	goalRouter.RegisterRoutes(router, rep)
 
 	achievemetRouter := new(AchievementRouter)
-	achievemetRouter.RegisterRoutes(router)
+	achievemetRouter.RegisterRoutes(router, rep)
 
 	return router
 }

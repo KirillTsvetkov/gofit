@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/KirillTsvetkov/gofit/models"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -15,29 +17,29 @@ func NewGoalRepositoryMongo(dbClient *mongo.Database, collectionName string) *Go
 	}
 }
 
-func (rep *GoalRepositoryMongo) CreateGoal(goal models.Goal) (models.Goal, error) {
-	return goal, nil
+func (rep *GoalRepositoryMongo) CreateGoal(ctx context.Context, goal models.Goal) (*models.Goal, error) {
+	return &goal, nil
 }
 
-func (rep *GoalRepositoryMongo) GetGoalById(id string) (models.Goal, error) {
+func (rep *GoalRepositoryMongo) GetGoalById(ctx context.Context, id string) (*models.Goal, error) {
 	var goal models.Goal
-	return goal, nil
+	return &goal, nil
 }
 
-func (rep *GoalRepositoryMongo) UpdateGoal(goal models.Goal) (models.Goal, error) {
-	return goal, nil
+func (rep *GoalRepositoryMongo) UpdateGoal(ctx context.Context, goal models.Goal) (*models.Goal, error) {
+	return &goal, nil
 }
 
-func (rep *GoalRepositoryMongo) DeleteGoal(id string) error {
+func (rep *GoalRepositoryMongo) DeleteGoal(ctx context.Context, id string) error {
 	return nil
 }
 
-func (rep *GoalRepositoryMongo) ListGoalsByUserId(userId int) ([]models.Goal, error) {
+func (rep *GoalRepositoryMongo) ListGoalsByUserId(ctx context.Context, userId int) ([]models.Goal, error) {
 	var models []models.Goal
 	return models, nil
 }
 
-func (rep *GoalRepositoryMongo) ListGoalsByUserIdAndWorkoutId(userId, workoutId int) ([]models.Goal, error) {
+func (rep *GoalRepositoryMongo) ListGoalsByUserIdAndWorkoutId(ctx context.Context, userId, workoutId int) ([]models.Goal, error) {
 	var models []models.Goal
 	return models, nil
 }

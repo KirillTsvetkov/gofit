@@ -13,51 +13,51 @@ type WorkoutRepository interface {
 
 	GetWorkoutById(ctx context.Context, id string) (*models.Workout, error)
 
-	UpdateWorkout(workout models.Workout) (*models.Workout, error)
+	UpdateWorkout(ctx context.Context, workout models.Workout) (*models.Workout, error)
 
-	DeleteWorkout(id string) error
+	DeleteWorkout(ctx context.Context, id string) error
 
-	ListWorkoutsByUserId(userId int) ([]models.Workout, error)
+	ListWorkoutsByUserId(ctx context.Context, userId int) ([]models.Workout, error)
 }
 
 type AchievementRepository interface {
-	CreateAchievement(achievement models.Achievement) (models.Achievement, error)
+	CreateAchievement(ctx context.Context, achievement models.Achievement) (models.Achievement, error)
 
-	GetAchievementById(id string) (models.Achievement, error)
+	GetAchievementById(ctx context.Context, id string) (*models.Achievement, error)
 
-	UpdateAchievement(achievement models.Achievement) (models.Achievement, error)
+	UpdateAchievement(ctx context.Context, achievement models.Achievement) (*models.Achievement, error)
 
-	DeleteAchievement(id string) error
+	DeleteAchievement(ctx context.Context, id string) error
 
-	ListAchievementsByUserId(userId int) ([]models.Achievement, error)
+	ListAchievementsByUserId(ctx context.Context, userId int) ([]models.Achievement, error)
 
-	ListAchievementsByUserIdAndWorkoutId(userId, workoutId int) ([]models.Achievement, error)
+	ListAchievementsByUserIdAndWorkoutId(ctx context.Context, userId, workoutId int) ([]models.Achievement, error)
 }
 
 type GoalRepository interface {
-	CreateGoal(goal models.Goal) (models.Goal, error)
+	CreateGoal(ctx context.Context, goal models.Goal) (*models.Goal, error)
 
-	GetGoalById(id string) (models.Goal, error)
+	GetGoalById(ctx context.Context, id string) (*models.Goal, error)
 
-	UpdateGoal(goal models.Goal) (models.Goal, error)
+	UpdateGoal(ctx context.Context, goal models.Goal) (*models.Goal, error)
 
-	DeleteGoal(id string) error
+	DeleteGoal(ctx context.Context, id string) error
 
-	ListGoalsByUserId(userId int) ([]models.Goal, error)
+	ListGoalsByUserId(ctx context.Context, userId int) ([]models.Goal, error)
 
-	ListGoalsByUserIdAndWorkoutId(userId, workoutId int) ([]models.Goal, error)
+	ListGoalsByUserIdAndWorkoutId(ctx context.Context, userId, workoutId int) ([]models.Goal, error)
 }
 
 type UserRepository interface {
-	CreateUser(user models.User) (models.User, error)
+	CreateUser(ctx context.Context, user models.User) (*models.User, error)
 
-	GetUserByID(id string) (models.User, error)
+	GetUserByID(ctx context.Context, id string) (*models.User, error)
 
-	UpdateUser(user models.User) (models.User, error)
+	UpdateUser(ctx context.Context, user models.User) (*models.User, error)
 
-	DeleteUser(id string) error
+	DeleteUser(ctx context.Context, id string) error
 
-	ListUsers() ([]models.User, error)
+	ListUsers(ctx context.Context) ([]models.User, error)
 }
 
 type Repository struct {
