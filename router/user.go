@@ -9,12 +9,12 @@ import (
 type UserRouter struct {
 }
 
-func (r *UserRouter) RegisterRoutes(router *gin.Engine, rep *repository.Repository) {
+func (r *UserRouter) RegisterRoutes(router *gin.Engine, rep *repository.Repository, authMiddleware gin.HandlerFunc) {
 	h := handler.UserHander{
 		Rep: rep,
 	}
 
-	users := router.Group("/users")
+	users := router.Group("/users", authMiddleware)
 	{
 		users.GET("/me", h.Me)
 		users.GET("/:id", h.GetUserById)

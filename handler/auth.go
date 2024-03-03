@@ -3,10 +3,12 @@ package handler
 import (
 	"net/http"
 
+	"github.com/KirillTsvetkov/gofit/repository"
 	"github.com/gin-gonic/gin"
 )
 
 type AuthHander struct {
+	Rep *repository.Repository
 }
 
 func (h *AuthHander) singUp(c *gin.Context) {

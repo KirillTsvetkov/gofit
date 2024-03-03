@@ -9,12 +9,12 @@ import (
 type AchievementRouter struct {
 }
 
-func (r *AchievementRouter) RegisterRoutes(router *gin.Engine, rep *repository.Repository) {
+func (r *AchievementRouter) RegisterRoutes(router *gin.Engine, rep *repository.Repository, authMiddleware gin.HandlerFunc) {
 	h := handler.AchievementHander{
 		Rep: rep,
 	}
 
-	achievements := router.Group("/achievements")
+	achievements := router.Group("/achievements", authMiddleware)
 	{
 		achievements.POST("/", h.GetAll)
 		achievements.GET("/:id", h.Get)

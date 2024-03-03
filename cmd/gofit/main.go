@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 
+	"github.com/KirillTsvetkov/gofit/auth"
+	"github.com/KirillTsvetkov/gofit/handler"
 	"github.com/KirillTsvetkov/gofit/router"
 
 	"github.com/KirillTsvetkov/gofit"
@@ -19,10 +21,16 @@ func main() {
 	dbClient, _ := repository.NewMongoDBClient()
 
 	rep := repository.NewRepository(dbClient)
+	jwtManager, err := auth.NewManager(viper.GetString("auth.jwt_key"))
+	if err != nil {
+		log.Fatalf("%s", err.Error())
+	}
 
+	authMiddleware := handler.NewAuthMiddleware(jwtManager)
 	router := new(router.Router)
 	srv := new(gofit.Server)
-	if err := srv.Run(viper.GetString("port"), router.IniteRoutes(rep)); err != nil {
+
+	if err := srv.Run(viper.GetString("port"), router.IniteRoutes(rep, authMiddleware)); err != nil {
 		log.Fatalf("error: %s", err.Error())
 	}
 }

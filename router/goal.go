@@ -9,12 +9,12 @@ import (
 type GoalRouter struct {
 }
 
-func (r *GoalRouter) RegisterRoutes(router *gin.Engine, rep *repository.Repository) {
+func (r *GoalRouter) RegisterRoutes(router *gin.Engine, rep *repository.Repository, authMiddleware gin.HandlerFunc) {
 	h := handler.GoalHander{
 		Rep: rep,
 	}
 
-	goals := router.Group("/goals")
+	goals := router.Group("/goals", authMiddleware)
 	{
 		goals.POST("/", h.GetGoals)
 		goals.GET("/:id", h.GetGoalById)
