@@ -3,13 +3,14 @@ package main
 import (
 	"log"
 
-	"github.com/KirillTsvetkov/gofit/auth"
-	"github.com/KirillTsvetkov/gofit/handler"
-	"github.com/KirillTsvetkov/gofit/router"
+	"github.com/KirillTsvetkov/gofit/internal/handler"
+	"github.com/KirillTsvetkov/gofit/internal/router"
+	"github.com/KirillTsvetkov/gofit/pkg/auth"
+	"github.com/KirillTsvetkov/gofit/pkg/database"
 
 	"github.com/KirillTsvetkov/gofit"
 	"github.com/KirillTsvetkov/gofit/config"
-	"github.com/KirillTsvetkov/gofit/repository"
+	"github.com/KirillTsvetkov/gofit/internal/repository"
 	"github.com/spf13/viper"
 )
 
@@ -18,7 +19,7 @@ func main() {
 		log.Fatalf("%s", err.Error())
 	}
 
-	dbClient, _ := repository.NewMongoDBClient()
+	dbClient, _ := database.NewMongoDBClient()
 
 	rep := repository.NewRepository(dbClient)
 	jwtManager, err := auth.NewManager(viper.GetString("auth.jwt_key"))

@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/KirillTsvetkov/gofit/auth"
+	"github.com/KirillTsvetkov/gofit/pkg/auth"
 
 	"github.com/gin-gonic/gin"
 )

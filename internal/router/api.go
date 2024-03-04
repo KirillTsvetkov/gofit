@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/KirillTsvetkov/gofit/repository"
+	"github.com/KirillTsvetkov/gofit/internal/repository"
 	"github.com/gin-gonic/gin"
 )
 

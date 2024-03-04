@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/KirillTsvetkov/gofit/models"
+	"github.com/KirillTsvetkov/gofit/internal/models"
 	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 )
