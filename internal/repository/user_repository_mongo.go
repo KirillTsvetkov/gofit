@@ -2,8 +2,12 @@ package repository
 
 import (
 	"context"
+	"log"
+	"time"
 
 	"github.com/KirillTsvetkov/gofit/internal/models"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -23,6 +27,26 @@ func (rep *UserRepositoryMongo) CreateUser(ctx context.Context, user models.User
 
 func (rep *UserRepositoryMongo) GetUserByID(ctx context.Context, id string) (*models.User, error) {
 	var user models.User
+	objectId, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		log.Println("Invalid id")
+	}
+
+	filter := bson.M{
+		"_id": objectId,
+		"deleted_at": bson.M{
+			"$exists": false,
+		},
+	}
+
+	result := rep.db.FindOne(ctx, filter)
+
+	if err := result.Decode(&user); err != nil {
+		log.Println(err.Error())
+		return nil, err
+	}
+
 	return &user, nil
 }
 
@@ -31,7 +55,17 @@ func (rep *UserRepositoryMongo) UpdateUser(ctx context.Context, user models.User
 }
 
 func (rep *UserRepositoryMongo) DeleteUser(ctx context.Context, id string) error {
-	return nil
+	objectId, err := primitive.ObjectIDFromHex(id)
+	filter := bson.M{"_id": objectId}
+	update := bson.M{
+		"$set": bson.M{
+			"deleted_at": time.Now(),
+		},
+	}
+
+	_, err = rep.db.UpdateOne(ctx, filter, update)
+
+	return err
 }
 
 func (rep *UserRepositoryMongo) ListUsers(ctx context.Context) ([]models.User, error) {

@@ -3,11 +3,13 @@ package repository
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/KirillTsvetkov/gofit/internal/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type AchievementRepositoryMongo struct {
@@ -42,7 +44,33 @@ func (rep *AchievementRepositoryMongo) GetAchievementById(ctx context.Context, i
 }
 
 func (rep *AchievementRepositoryMongo) UpdateAchievement(ctx context.Context, achievement models.Achievement) (*models.Achievement, error) {
-	return &achievement, nil
+	filter := bson.M{"_id": achievement.ID}
+	update := bson.M{
+		"$set": bson.M{
+			"updated_at": time.Now(),
+		},
+	}
+
+	if achievement.UserID != primitive.NilObjectID {
+		update["$set"].(bson.M)["user_id"] = achievement.UserID
+	}
+	if achievement.WorkoutID != primitive.NilObjectID {
+		update["$set"].(bson.M)["workout_id"] = achievement.WorkoutID
+	}
+	if achievement.Description != "" {
+		update["$set"].(bson.M)["description"] = achievement.Description
+	}
+
+	findUpdateOptions := options.FindOneAndUpdateOptions{}
+	findUpdateOptions.SetReturnDocument(options.After)
+
+	var updatedAchievement models.Achievement
+	err := rep.db.FindOneAndUpdate(ctx, filter, update, &findUpdateOptions).Decode(&updatedAchievement)
+	if err != nil {
+		return nil, err
+	}
+
+	return &updatedAchievement, nil
 }
 
 func (rep *AchievementRepositoryMongo) DeleteAchievement(ctx context.Context, id string) error {
