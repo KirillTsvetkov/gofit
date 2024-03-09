@@ -51,14 +51,6 @@ func (rep *WorkoutRepositoryMongo) UpdateWorkout(ctx context.Context, workout mo
 		},
 	}
 
-	if workout.Title != "" {
-		update["$set"].(bson.M)["title"] = workout.Title
-	}
-
-	if workout.Description != "" {
-		update["$set"].(bson.M)["description"] = workout.Description
-	}
-
 	findUpdateOptions := options.FindOneAndUpdateOptions{}
 	findUpdateOptions.SetReturnDocument(options.After)
 

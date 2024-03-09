@@ -1,9 +1,13 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type Workout struct {
-	ID          primitive.ObjectID `bson:"_id,omitempty"`
-	Title       string             `bson:"title"`
-	Description string             `bson:"description"`
+	ID        primitive.ObjectID `bson:"_id,omitempty"`
+	Exercises []Exercise         `bson:"exercises"`
+	Date      time.Time          `bson:"date"`
 }

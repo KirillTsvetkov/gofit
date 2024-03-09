@@ -1,15 +1,11 @@
 package models
 
 import (
-	"time"
-
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type Goal struct {
+type ExerciseType struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty"`
-	UserID      primitive.ObjectID `bson:"user_id"`
-	WorkoutID   primitive.ObjectID `bson:"workout_id"`
+	Title       string             `bson:"title"`
 	Description string             `bson:"description"`
-	Date        time.Time          `bson:"date"`
 }
