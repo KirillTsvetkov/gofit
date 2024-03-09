@@ -96,6 +96,7 @@ func (rep *AchievementRepositoryMongo) ListAchievementsByUserId(ctx context.Cont
 	if err = cursor.All(ctx, &achievements); err != nil {
 		log.Fatal(err)
 	}
+
 	return achievements, nil
 }
 

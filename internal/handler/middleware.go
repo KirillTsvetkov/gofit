@@ -22,7 +22,7 @@ func NewAuthMiddleware(jwtManager *auth.Manager) gin.HandlerFunc {
 func (m *AuthMiddleware) Handle(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
 	if authHeader == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 			"message": "Authorization header is missing",
 		})
 		return
@@ -30,14 +30,14 @@ func (m *AuthMiddleware) Handle(c *gin.Context) {
 
 	headerParts := strings.Split(authHeader, " ")
 	if len(headerParts) != 2 {
-		c.JSON(http.StatusUnauthorized, gin.H{
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 			"message": "Bearer token is missing",
 		})
 		return
 	}
 
 	if headerParts[0] != "Bearer" {
-		c.JSON(http.StatusUnauthorized, gin.H{
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 			"message": "Bearer token is missing",
 		})
 		return

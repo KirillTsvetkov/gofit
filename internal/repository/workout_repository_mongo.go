@@ -43,6 +43,18 @@ func (rep *WorkoutRepositoryMongo) GetWorkoutById(ctx context.Context, id string
 	return workout, nil
 }
 
+func (rep *WorkoutRepositoryMongo) GetWorkoutByUserId(ctx context.Context, userId string) ([]models.Workout, error) {
+	var workout []models.Workout
+	err := rep.db.FindOne(ctx, bson.M{
+		"user_id": userId,
+	}).Decode(workout)
+
+	if err != nil {
+		return nil, err
+	}
+	return workout, nil
+}
+
 func (rep *WorkoutRepositoryMongo) UpdateWorkout(ctx context.Context, workout models.Workout) (*models.Workout, error) {
 	filter := bson.M{"_id": workout.ID}
 	update := bson.M{

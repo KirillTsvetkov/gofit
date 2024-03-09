@@ -13,6 +13,8 @@ type WorkoutRepository interface {
 
 	GetWorkoutById(ctx context.Context, id string) (*models.Workout, error)
 
+	GetWorkoutByUserId(ctx context.Context, userId string) ([]models.Workout, error)
+
 	UpdateWorkout(ctx context.Context, workout models.Workout) (*models.Workout, error)
 
 	DeleteWorkout(ctx context.Context, id string) error

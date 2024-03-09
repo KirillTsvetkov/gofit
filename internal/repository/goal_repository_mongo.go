@@ -23,6 +23,11 @@ func NewGoalRepositoryMongo(dbClient *mongo.Database, collectionName string) *Go
 }
 
 func (rep *GoalRepositoryMongo) CreateGoal(ctx context.Context, goal models.Goal) (*models.Goal, error) {
+	res, err := rep.db.InsertOne(ctx, goal)
+	if err != nil {
+		return &goal, err
+	}
+	res.InsertedID.(primitive.ObjectID).Hex()
 	return &goal, nil
 }
 
@@ -42,12 +47,8 @@ func (rep *GoalRepositoryMongo) UpdateGoal(ctx context.Context, goal models.Goal
 	if goal.UserID != primitive.NilObjectID {
 		update["$set"].(bson.M)["user_id"] = goal.UserID
 	}
-	if goal.WorkoutID != primitive.NilObjectID {
-		update["$set"].(bson.M)["workout_id"] = goal.WorkoutID
-	}
-	if goal.Description != "" {
-		update["$set"].(bson.M)["description"] = goal.Description
-	}
+
+	update["$set"].(bson.M)["status"] = goal.Status
 
 	findUpdateOptions := options.FindOneAndUpdateOptions{}
 	findUpdateOptions.SetReturnDocument(options.After)

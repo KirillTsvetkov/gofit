@@ -12,5 +12,5 @@ type Achievement struct {
 	WorkoutID   primitive.ObjectID `bson:"workout_id"`
 	Description string             `bson:"description"`
 	CreatedAt   time.Time          `bson:"created_at"`
-	UpdateddAt  time.Time          `bson:"updated_at"`
+	UpdatedAt   time.Time          `bson:"updated_at"`
 }

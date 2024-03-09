@@ -8,6 +8,7 @@ import (
 
 type Workout struct {
 	ID        primitive.ObjectID `bson:"_id,omitempty"`
+	UserID    primitive.ObjectID `bson:"user_id"`
 	Exercises []Exercise         `bson:"exercises"`
 	Date      time.Time          `bson:"date"`
 }

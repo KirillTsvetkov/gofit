@@ -4,21 +4,27 @@ import (
 	"net/http"
 
 	"github.com/KirillTsvetkov/gofit/internal/repository"
+	"github.com/KirillTsvetkov/gofit/internal/services"
 	"github.com/gin-gonic/gin"
 )
 
 type WorkoutHandler struct {
-	Rep *repository.Repository
+	service *services.WorkoutService
 }
 
-func NewHandler() *WorkoutHandler {
-	return &WorkoutHandler{}
+func NewWorkoutHandler(rep *repository.Repository) *WorkoutHandler {
+	service := services.NewWorkoutService(rep)
+	return &WorkoutHandler{service: service}
 }
 
 func (h *WorkoutHandler) GetWorkouts(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "Hi"})
+	userId := c.Value("user").(string)
+	workouts := h.service.GetUserWorkout(c, userId)
+	c.IndentedJSON(http.StatusOK, workouts)
 }
 
-func (h *WorkoutHandler) GetWorkoutById(c *gin.Context) {
-
+func (h *WorkoutHandler) CreateWorkout(c *gin.Context) {
+	userId := c.Value("user").(string)
+	workouts := h.service.CreateWorkout(c, userId)
+	c.IndentedJSON(http.StatusOK, workouts)
 }

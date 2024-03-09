@@ -10,13 +10,11 @@ type WorkoutRouter struct {
 }
 
 func (r *WorkoutRouter) RegisterRoutes(router *gin.Engine, rep *repository.Repository, authMiddleware gin.HandlerFunc) {
-	h := handler.WorkoutHandler{
-		Rep: rep,
-	}
+	h := handler.NewWorkoutHandler(rep)
 
 	workouts := router.Group("/workouts", authMiddleware)
 	{
 		workouts.GET("/", h.GetWorkouts)
-		workouts.GET("/:id", h.GetWorkoutById)
+		// workouts.GET("/:id", h.GetWorkoutById)
 	}
 }

@@ -7,9 +7,9 @@ import (
 )
 
 type Goal struct {
-	ID          primitive.ObjectID `bson:"_id,omitempty"`
-	UserID      primitive.ObjectID `bson:"user_id"`
-	WorkoutID   primitive.ObjectID `bson:"workout_id"`
-	Description string             `bson:"description"`
-	Date        time.Time          `bson:"date"`
+	ID       primitive.ObjectID `bson:"_id,omitempty"`
+	UserID   primitive.ObjectID `bson:"user_id"`
+	Exercise Exercise           `bson:"exercise"`
+	Date     time.Time          `bson:"date"`
+	Status   GoalStatus         `bson:"status"`
 }
