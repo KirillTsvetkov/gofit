@@ -17,7 +17,7 @@ type WorkoutRepository interface {
 
 	DeleteWorkout(ctx context.Context, id string) error
 
-	ListWorkoutsByUserId(ctx context.Context, userId int) ([]models.Workout, error)
+	ListWorkouts(ctx context.Context) ([]models.Workout, error)
 }
 
 type AchievementRepository interface {

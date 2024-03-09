@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type UserRepositoryMongo struct {
@@ -51,7 +52,30 @@ func (rep *UserRepositoryMongo) GetUserByID(ctx context.Context, id string) (*mo
 }
 
 func (rep *UserRepositoryMongo) UpdateUser(ctx context.Context, user models.User) (*models.User, error) {
-	return &user, nil
+	filter := bson.M{"_id": user.ID}
+	update := bson.M{
+		"$set": bson.M{
+			"updated_at": time.Now(),
+		},
+	}
+
+	if user.Name != "" {
+		update["$set"].(bson.M)["name"] = user.Name
+	}
+	if user.Email != "" {
+		update["$set"].(bson.M)["email"] = user.Email
+	}
+
+	findUpdateOptions := options.FindOneAndUpdateOptions{}
+	findUpdateOptions.SetReturnDocument(options.After)
+
+	var updatedUser models.User
+	err := rep.db.FindOneAndUpdate(ctx, filter, update, &findUpdateOptions).Decode(&updatedUser)
+	if err != nil {
+		return nil, err
+	}
+
+	return &updatedUser, nil
 }
 
 func (rep *UserRepositoryMongo) DeleteUser(ctx context.Context, id string) error {

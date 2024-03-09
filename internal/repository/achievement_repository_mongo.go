@@ -85,7 +85,17 @@ func (rep *AchievementRepositoryMongo) DeleteAchievement(ctx context.Context, id
 }
 
 func (rep *AchievementRepositoryMongo) ListAchievementsByUserId(ctx context.Context, userId int) ([]models.Achievement, error) {
+	filter := bson.M{"user_id": userId}
+	cursor, err := rep.db.Find(ctx, filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cursor.Close(ctx)
+
 	var achievements []models.Achievement
+	if err = cursor.All(ctx, &achievements); err != nil {
+		log.Fatal(err)
+	}
 	return achievements, nil
 }
 

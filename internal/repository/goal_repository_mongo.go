@@ -73,8 +73,18 @@ func (rep *GoalRepositoryMongo) DeleteGoal(ctx context.Context, id string) error
 }
 
 func (rep *GoalRepositoryMongo) ListGoalsByUserId(ctx context.Context, userId int) ([]models.Goal, error) {
-	var models []models.Goal
-	return models, nil
+	filter := bson.M{"user_id": userId}
+	cursor, err := rep.db.Find(ctx, filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cursor.Close(ctx)
+
+	var goals []models.Goal
+	if err = cursor.All(ctx, &goals); err != nil {
+		log.Fatal(err)
+	}
+	return goals, nil
 }
 
 func (rep *GoalRepositoryMongo) ListGoalsByUserIdAndWorkoutId(ctx context.Context, userId, workoutId int) ([]models.Goal, error) {

@@ -11,8 +11,5 @@ type User struct {
 	Name      string             `bson:"name"`
 	Email     string             `bson:"email"`
 	Password  string             `bson:"password"`
-	Age       int                `bson:"age"`
-	Weight    float32            `bson:"weight"`
-	Height    int                `bson:"height"`
 	DeletedAt time.Time          `json:"-" bson:"deleted_at,omitempty"`
 }

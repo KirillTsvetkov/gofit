@@ -82,7 +82,25 @@ func (rep *WorkoutRepositoryMongo) DeleteWorkout(ctx context.Context, id string)
 	return err
 }
 
-func (rep *WorkoutRepositoryMongo) ListWorkoutsByUserId(ctx context.Context, userId int) ([]models.Workout, error) {
+func (rep *WorkoutRepositoryMongo) ListWorkouts(ctx context.Context) ([]models.Workout, error) {
 	var workouts []models.Workout
+	pageSize := int64(10)
+	pageNumber := int64(1)
+	skip := int64((pageNumber - 1) * pageSize)
+	filter := bson.D{}
+	cursor, err := rep.db.Find(ctx, filter, &options.FindOptions{
+		Skip:  &skip,
+		Limit: &pageSize,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cursor.Close(context.TODO())
+
+	for cursor.Next(context.TODO()) {
+		if err := cursor.Decode(&workouts); err != nil {
+			log.Fatal(err)
+		}
+	}
 	return workouts, nil
 }
