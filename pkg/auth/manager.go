@@ -26,7 +26,7 @@ func (m *Manager) GenerateJWT(userID string, ttl time.Duration) (string, error) 
 		"exp":     time.Now().Add(ttl).Unix(),
 	})
 
-	tokenString, err := token.SignedString(m.jwtKey)
+	tokenString, err := token.SignedString([]byte(m.jwtKey))
 	if err != nil {
 		return "", err
 	}

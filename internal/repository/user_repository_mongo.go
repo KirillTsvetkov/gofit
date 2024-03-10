@@ -26,6 +26,16 @@ func (rep *UserRepositoryMongo) CreateUser(ctx context.Context, user models.User
 	return &user, nil
 }
 
+func (rep *UserRepositoryMongo) GetUser(ctx context.Context, email, password string) (*models.User, error) {
+	var user models.User
+	log.Print("Username: " + email + " password: " + password)
+	err := rep.db.FindOne(ctx, bson.M{"email": email, "password": password}).Decode(&user)
+	if err != nil {
+		return &user, err
+	}
+	return &user, nil
+}
+
 func (rep *UserRepositoryMongo) GetUserByID(ctx context.Context, id string) (*models.User, error) {
 	var user models.User
 	objectId, err := primitive.ObjectIDFromHex(id)
