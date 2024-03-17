@@ -3,12 +3,17 @@ package handler
 import (
 	"net/http"
 
+	"github.com/KirillTsvetkov/gofit/internal/models"
 	"github.com/KirillTsvetkov/gofit/internal/repository"
 	"github.com/gin-gonic/gin"
 )
 
 type AchievementHander struct {
 	Rep *repository.Repository
+}
+
+type AchievementResponse struct {
+	Data []models.Achievement `json:"data"`
 }
 
 func (h *AchievementHander) GetAll(c *gin.Context) {

@@ -49,7 +49,6 @@ func (m *AuthMiddleware) Handle(c *gin.Context) {
 		if err == auth.ErrInvalidAccessToken {
 			status = http.StatusUnauthorized
 		}
-
 		c.AbortWithStatus(status)
 		return
 	}

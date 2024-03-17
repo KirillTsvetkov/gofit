@@ -5,11 +5,18 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/KirillTsvetkov/gofit/internal/models"
+
 	"github.com/dgrijalva/jwt-go"
 )
 
 type Manager struct {
 	jwtKey string
+}
+
+type AuthClaims struct {
+	jwt.StandardClaims
+	User *models.User `json:"user"`
 }
 
 func NewManager(jwtKey string) (*Manager, error) {
@@ -20,11 +27,14 @@ func NewManager(jwtKey string) (*Manager, error) {
 	return &Manager{jwtKey: jwtKey}, nil
 }
 
-func (m *Manager) GenerateJWT(userID string, ttl time.Duration) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": userID,
-		"exp": time.Now().Add(ttl).Unix(),
-	})
+func (m *Manager) GenerateJWT(user *models.User, ttl time.Duration) (string, error) {
+	claims := AuthClaims{
+		User: user,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(ttl).Unix(),
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	tokenString, err := token.SignedString([]byte(m.jwtKey))
 	if err != nil {
@@ -34,8 +44,8 @@ func (m *Manager) GenerateJWT(userID string, ttl time.Duration) (string, error) 
 	return tokenString, nil
 }
 
-func (m *Manager) ValidateJWT(tokenString string) (string, error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (i interface{}, err error) {
+func (m *Manager) ValidateJWT(tokenString string) (*models.User, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &AuthClaims{}, func(token *jwt.Token) (i interface{}, err error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
@@ -43,13 +53,11 @@ func (m *Manager) ValidateJWT(tokenString string) (string, error) {
 	})
 
 	if err != nil {
-		return "", err
+		return nil, err
+	}
+	if claims, ok := token.Claims.(*AuthClaims); ok && token.Valid {
+		return claims.User, nil
 	}
 
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		return "", fmt.Errorf("error get user claims from token")
-	}
-
-	return claims["sub"].(string), nil
+	return nil, fmt.Errorf("invalid access token")
 }

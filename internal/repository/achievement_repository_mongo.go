@@ -84,8 +84,8 @@ func (rep *AchievementRepositoryMongo) DeleteAchievement(ctx context.Context, id
 	return err
 }
 
-func (rep *AchievementRepositoryMongo) ListAchievementsByUserId(ctx context.Context, userId int) ([]models.Achievement, error) {
-	filter := bson.M{"user_id": userId}
+func (rep *AchievementRepositoryMongo) ListAchievementsByUserId(ctx context.Context, user *models.User) ([]models.Achievement, error) {
+	filter := bson.M{"user_id": user.ID}
 	cursor, err := rep.db.Find(ctx, filter)
 	if err != nil {
 		log.Fatal(err)
@@ -97,10 +97,5 @@ func (rep *AchievementRepositoryMongo) ListAchievementsByUserId(ctx context.Cont
 		log.Fatal(err)
 	}
 
-	return achievements, nil
-}
-
-func (rep *AchievementRepositoryMongo) ListAchievementsByUserIdAndWorkoutId(ctx context.Context, userId, workoutId int) ([]models.Achievement, error) {
-	var achievements []models.Achievement
 	return achievements, nil
 }

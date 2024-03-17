@@ -9,17 +9,17 @@ import (
 )
 
 type WorkoutRepository interface {
-	CreateWorkout(ctx context.Context, workout models.Workout) (*models.Workout, error)
+	CreateWorkout(ctx context.Context, workout *models.Workout, user *models.User) (*models.Workout, error)
 
 	GetWorkoutById(ctx context.Context, id string) (*models.Workout, error)
 
-	GetWorkoutByUserId(ctx context.Context, userId string) ([]models.Workout, error)
+	GetWorkoutByUserId(ctx context.Context, user *models.User) ([]models.Workout, error)
 
 	UpdateWorkout(ctx context.Context, workout models.Workout) (*models.Workout, error)
 
 	DeleteWorkout(ctx context.Context, id string) error
 
-	ListWorkouts(ctx context.Context) ([]models.Workout, error)
+	ListWorkouts(ctx context.Context, user *models.User) ([]models.Workout, error)
 }
 
 type AchievementRepository interface {
@@ -31,9 +31,7 @@ type AchievementRepository interface {
 
 	DeleteAchievement(ctx context.Context, id string) error
 
-	ListAchievementsByUserId(ctx context.Context, userId int) ([]models.Achievement, error)
-
-	ListAchievementsByUserIdAndWorkoutId(ctx context.Context, userId, workoutId int) ([]models.Achievement, error)
+	ListAchievementsByUserId(ctx context.Context, user *models.User) ([]models.Achievement, error)
 }
 
 type GoalRepository interface {
@@ -45,9 +43,7 @@ type GoalRepository interface {
 
 	DeleteGoal(ctx context.Context, id string) error
 
-	ListGoalsByUserId(ctx context.Context, userId int) ([]models.Goal, error)
-
-	ListGoalsByUserIdAndWorkoutId(ctx context.Context, userId, workoutId int) ([]models.Goal, error)
+	ListGoalsByUserId(ctx context.Context, user *models.User) ([]models.Goal, error)
 }
 
 type UserRepository interface {

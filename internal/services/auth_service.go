@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/KirillTsvetkov/gofit/internal/repository"
 	"github.com/KirillTsvetkov/gofit/pkg/auth"
@@ -25,8 +26,7 @@ func (s *AuthService) CreateToken(ctx context.Context, email string, password st
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	stringObjectID := user.ID.Hex()
-	token, err := s.jwtManager.GenerateJWT(stringObjectID, 300)
+	token, err := s.jwtManager.GenerateJWT(user, time.Second*1000)
 
 	return token, err
 }

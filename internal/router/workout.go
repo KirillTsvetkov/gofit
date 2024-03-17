@@ -15,6 +15,7 @@ func (r *WorkoutRouter) RegisterRoutes(router *gin.Engine, rep *repository.Repos
 	workouts := router.Group("/workouts", authMiddleware)
 	{
 		workouts.GET("/", h.GetWorkouts)
+		workouts.POST("/", h.CreateWorkout)
 		// workouts.GET("/:id", h.GetWorkoutById)
 	}
 }

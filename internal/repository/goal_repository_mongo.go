@@ -73,8 +73,8 @@ func (rep *GoalRepositoryMongo) DeleteGoal(ctx context.Context, id string) error
 	return err
 }
 
-func (rep *GoalRepositoryMongo) ListGoalsByUserId(ctx context.Context, userId int) ([]models.Goal, error) {
-	filter := bson.M{"user_id": userId}
+func (rep *GoalRepositoryMongo) ListGoalsByUserId(ctx context.Context, user *models.User) ([]models.Goal, error) {
+	filter := bson.M{"user_id": user.ID}
 	cursor, err := rep.db.Find(ctx, filter)
 	if err != nil {
 		log.Fatal(err)
@@ -86,9 +86,4 @@ func (rep *GoalRepositoryMongo) ListGoalsByUserId(ctx context.Context, userId in
 		log.Fatal(err)
 	}
 	return goals, nil
-}
-
-func (rep *GoalRepositoryMongo) ListGoalsByUserIdAndWorkoutId(ctx context.Context, userId, workoutId int) ([]models.Goal, error) {
-	var models []models.Goal
-	return models, nil
 }
