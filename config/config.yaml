@@ -7,5 +7,6 @@ mongo:
   achievement_collection: "achievements"
   goal_collection: "goals"
   user_collection: "users"
+  exercise_type: "exercise_type"
 auth:
   jwt_key: "salt"

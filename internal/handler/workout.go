@@ -43,6 +43,10 @@ func (h *WorkoutHandler) CreateWorkout(c *gin.Context) {
 		return
 	}
 	exercise := request.Exercises
+	if len(exercise) < 1 {
+		c.AbortWithStatus(http.StatusForbidden)
+		return
+	}
 
 	workouts := h.service.CreateWorkout(c, exercise, user)
 	c.IndentedJSON(http.StatusOK, workouts)

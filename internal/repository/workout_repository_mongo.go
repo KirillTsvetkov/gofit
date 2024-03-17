@@ -27,7 +27,7 @@ func (rep *WorkoutRepositoryMongo) CreateWorkout(ctx context.Context, workout *m
 	if err != nil {
 		return workout, err
 	}
-	res.InsertedID.(primitive.ObjectID).Hex()
+	workout.ID = res.InsertedID.(primitive.ObjectID)
 	return workout, nil
 }
 
