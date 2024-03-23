@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/KirillTsvetkov/gofit/internal/models"
+	"github.com/KirillTsvetkov/gofit/internal/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,12 +22,12 @@ func NewAchievementRepositoryMongo(dbClient *mongo.Database, collectionName stri
 	}
 }
 
-func (rep *AchievementRepositoryMongo) CreateAchievement(ctx context.Context, achievement models.Achievement) (models.Achievement, error) {
+func (rep *AchievementRepositoryMongo) CreateAchievement(ctx context.Context, achievement domain.Achievement) (domain.Achievement, error) {
 	return achievement, nil
 }
 
-func (rep *AchievementRepositoryMongo) GetAchievementById(ctx context.Context, id string) (*models.Achievement, error) {
-	var achievement models.Achievement
+func (rep *AchievementRepositoryMongo) GetAchievementById(ctx context.Context, id string) (*domain.Achievement, error) {
+	var achievement domain.Achievement
 	objectId, err := primitive.ObjectIDFromHex(id)
 
 	if err != nil {
@@ -43,7 +43,7 @@ func (rep *AchievementRepositoryMongo) GetAchievementById(ctx context.Context, i
 	return &achievement, nil
 }
 
-func (rep *AchievementRepositoryMongo) UpdateAchievement(ctx context.Context, achievement models.Achievement) (*models.Achievement, error) {
+func (rep *AchievementRepositoryMongo) UpdateAchievement(ctx context.Context, achievement domain.Achievement) (*domain.Achievement, error) {
 	filter := bson.M{"_id": achievement.ID}
 	update := bson.M{
 		"$set": bson.M{
@@ -64,7 +64,7 @@ func (rep *AchievementRepositoryMongo) UpdateAchievement(ctx context.Context, ac
 	findUpdateOptions := options.FindOneAndUpdateOptions{}
 	findUpdateOptions.SetReturnDocument(options.After)
 
-	var updatedAchievement models.Achievement
+	var updatedAchievement domain.Achievement
 	err := rep.db.FindOneAndUpdate(ctx, filter, update, &findUpdateOptions).Decode(&updatedAchievement)
 	if err != nil {
 		return nil, err
@@ -84,7 +84,7 @@ func (rep *AchievementRepositoryMongo) DeleteAchievement(ctx context.Context, id
 	return err
 }
 
-func (rep *AchievementRepositoryMongo) ListAchievementsByUserId(ctx context.Context, user *models.User) ([]models.Achievement, error) {
+func (rep *AchievementRepositoryMongo) ListAchievementsByUserId(ctx context.Context, user *domain.User) ([]domain.Achievement, error) {
 	filter := bson.M{"user_id": user.ID}
 	cursor, err := rep.db.Find(ctx, filter)
 	if err != nil {
@@ -92,7 +92,7 @@ func (rep *AchievementRepositoryMongo) ListAchievementsByUserId(ctx context.Cont
 	}
 	defer cursor.Close(ctx)
 
-	var achievements []models.Achievement
+	var achievements []domain.Achievement
 	if err = cursor.All(ctx, &achievements); err != nil {
 		log.Fatal(err)
 	}

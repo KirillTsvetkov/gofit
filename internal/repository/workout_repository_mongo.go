@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/KirillTsvetkov/gofit/internal/models"
+	"github.com/KirillTsvetkov/gofit/internal/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,7 +22,7 @@ func NewWorkoutRepositoryMongo(dbClient *mongo.Database, collectionName string) 
 	}
 }
 
-func (rep *WorkoutRepositoryMongo) CreateWorkout(ctx context.Context, workout *models.Workout, user *models.User) (*models.Workout, error) {
+func (rep *WorkoutRepositoryMongo) CreateWorkout(ctx context.Context, workout *domain.Workout, user *domain.User) (*domain.Workout, error) {
 	res, err := rep.db.InsertOne(ctx, workout)
 	if err != nil {
 		return workout, err
@@ -31,8 +31,8 @@ func (rep *WorkoutRepositoryMongo) CreateWorkout(ctx context.Context, workout *m
 	return workout, nil
 }
 
-func (rep *WorkoutRepositoryMongo) GetWorkoutById(ctx context.Context, id string) (*models.Workout, error) {
-	workout := new(models.Workout)
+func (rep *WorkoutRepositoryMongo) GetWorkoutById(ctx context.Context, id string) (*domain.Workout, error) {
+	workout := new(domain.Workout)
 	err := rep.db.FindOne(ctx, bson.M{
 		"ID": id,
 	}).Decode(workout)
@@ -43,8 +43,8 @@ func (rep *WorkoutRepositoryMongo) GetWorkoutById(ctx context.Context, id string
 	return workout, nil
 }
 
-func (rep *WorkoutRepositoryMongo) GetWorkoutByUserId(ctx context.Context, user *models.User) ([]models.Workout, error) {
-	var workout []models.Workout
+func (rep *WorkoutRepositoryMongo) GetWorkoutByUserId(ctx context.Context, user *domain.User) ([]domain.Workout, error) {
+	var workout []domain.Workout
 	err := rep.db.FindOne(ctx, bson.M{
 		"user_id": user.ID,
 	}).Decode(workout)
@@ -55,7 +55,7 @@ func (rep *WorkoutRepositoryMongo) GetWorkoutByUserId(ctx context.Context, user 
 	return workout, nil
 }
 
-func (rep *WorkoutRepositoryMongo) UpdateWorkout(ctx context.Context, workout models.Workout) (*models.Workout, error) {
+func (rep *WorkoutRepositoryMongo) UpdateWorkout(ctx context.Context, workout domain.Workout) (*domain.Workout, error) {
 	filter := bson.M{"_id": workout.ID}
 	update := bson.M{
 		"$set": bson.M{
@@ -66,7 +66,7 @@ func (rep *WorkoutRepositoryMongo) UpdateWorkout(ctx context.Context, workout mo
 	findUpdateOptions := options.FindOneAndUpdateOptions{}
 	findUpdateOptions.SetReturnDocument(options.After)
 
-	var updatedWorkout models.Workout
+	var updatedWorkout domain.Workout
 	err := rep.db.FindOneAndUpdate(ctx, filter, update, &findUpdateOptions).Decode(&updatedWorkout)
 	if err != nil {
 		return nil, err
@@ -86,17 +86,31 @@ func (rep *WorkoutRepositoryMongo) DeleteWorkout(ctx context.Context, id string)
 	return err
 }
 
-func (rep *WorkoutRepositoryMongo) ListWorkouts(ctx context.Context, user *models.User) ([]models.Workout, error) {
+func (rep *WorkoutRepositoryMongo) ListWorkouts(ctx context.Context, user *domain.User, pagination domain.PaginationQuery) ([]domain.Workout, int64, error) {
 	filter := bson.M{"user_id": user.ID}
-	cursor, err := rep.db.Find(ctx, filter)
+
+	totalCount, err := rep.db.CountDocuments(context.TODO(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fOpt := pagination.GetPaginationOpts()
+
+	cursor, err := rep.db.Find(ctx, filter, fOpt)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer cursor.Close(ctx)
 
-	var workouts []models.Workout
-	if err = cursor.All(ctx, &workouts); err != nil {
-		log.Fatal(err)
+	var workouts []domain.Workout
+	for cursor.Next(ctx) {
+		var workout domain.Workout
+		if err := cursor.Decode(&workout); err != nil {
+			log.Println(err)
+		}
+
+		workouts = append(workouts, workout)
 	}
-	return workouts, nil
+
+	return workouts, totalCount, nil
 }

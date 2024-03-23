@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/KirillTsvetkov/gofit/internal/models"
+	"github.com/KirillTsvetkov/gofit/internal/domain"
 	"github.com/KirillTsvetkov/gofit/internal/repository"
 )
 
@@ -19,24 +19,26 @@ func NewWorkoutService(rep *repository.Repository) *WorkoutService {
 	}
 }
 
-func (s *WorkoutService) GetUserWorkout(ctx context.Context, userId *models.User) []models.Workout {
-	workouts, err := s.rep.WorkoutRepository.ListWorkouts(
+func (s *WorkoutService) GetUserWorkout(ctx context.Context, user *domain.User, query domain.GetWorkoutListQuery) ([]domain.Workout, int64) {
+	workouts, total, err := s.rep.WorkoutRepository.ListWorkouts(
 		ctx,
-		userId,
+		user,
+		query.PaginationQuery,
 	)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
 	if workouts == nil {
-		workouts = []models.Workout{}
+		workouts = []domain.Workout{}
 	}
 
-	return workouts
+	return workouts, total
 }
 
-func (s *WorkoutService) CreateWorkout(ctx context.Context, exercise []models.Exercise, user *models.User) *models.Workout {
-	workout := &models.Workout{
+func (s *WorkoutService) CreateWorkout(ctx context.Context, exercise []domain.Exercise, user *domain.User) *domain.Workout {
+
+	workout := &domain.Workout{
 		UserID:    user.ID,
 		Date:      time.Now(),
 		Exercises: exercise,

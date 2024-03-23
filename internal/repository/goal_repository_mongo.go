@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/KirillTsvetkov/gofit/internal/models"
+	"github.com/KirillTsvetkov/gofit/internal/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,7 +22,7 @@ func NewGoalRepositoryMongo(dbClient *mongo.Database, collectionName string) *Go
 	}
 }
 
-func (rep *GoalRepositoryMongo) CreateGoal(ctx context.Context, goal models.Goal) (*models.Goal, error) {
+func (rep *GoalRepositoryMongo) CreateGoal(ctx context.Context, goal domain.Goal) (*domain.Goal, error) {
 	res, err := rep.db.InsertOne(ctx, goal)
 	if err != nil {
 		return &goal, err
@@ -31,12 +31,12 @@ func (rep *GoalRepositoryMongo) CreateGoal(ctx context.Context, goal models.Goal
 	return &goal, nil
 }
 
-func (rep *GoalRepositoryMongo) GetGoalById(ctx context.Context, id string) (*models.Goal, error) {
-	var goal models.Goal
+func (rep *GoalRepositoryMongo) GetGoalById(ctx context.Context, id string) (*domain.Goal, error) {
+	var goal domain.Goal
 	return &goal, nil
 }
 
-func (rep *GoalRepositoryMongo) UpdateGoal(ctx context.Context, goal models.Goal) (*models.Goal, error) {
+func (rep *GoalRepositoryMongo) UpdateGoal(ctx context.Context, goal domain.Goal) (*domain.Goal, error) {
 	filter := bson.M{"_id": goal.ID}
 	update := bson.M{
 		"$set": bson.M{
@@ -53,7 +53,7 @@ func (rep *GoalRepositoryMongo) UpdateGoal(ctx context.Context, goal models.Goal
 	findUpdateOptions := options.FindOneAndUpdateOptions{}
 	findUpdateOptions.SetReturnDocument(options.After)
 
-	var updatedGoal models.Goal
+	var updatedGoal domain.Goal
 	err := rep.db.FindOneAndUpdate(ctx, filter, update, &findUpdateOptions).Decode(&updatedGoal)
 	if err != nil {
 		return nil, err
@@ -73,7 +73,7 @@ func (rep *GoalRepositoryMongo) DeleteGoal(ctx context.Context, id string) error
 	return err
 }
 
-func (rep *GoalRepositoryMongo) ListGoalsByUserId(ctx context.Context, user *models.User) ([]models.Goal, error) {
+func (rep *GoalRepositoryMongo) ListGoalsByUserId(ctx context.Context, user *domain.User) ([]domain.Goal, error) {
 	filter := bson.M{"user_id": user.ID}
 	cursor, err := rep.db.Find(ctx, filter)
 	if err != nil {
@@ -81,7 +81,7 @@ func (rep *GoalRepositoryMongo) ListGoalsByUserId(ctx context.Context, user *mod
 	}
 	defer cursor.Close(ctx)
 
-	var goals []models.Goal
+	var goals []domain.Goal
 	if err = cursor.All(ctx, &goals); err != nil {
 		log.Fatal(err)
 	}

@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/KirillTsvetkov/gofit/internal/models"
+	"github.com/KirillTsvetkov/gofit/internal/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,12 +22,12 @@ func NewUserRepositoryMongo(dbClient *mongo.Database, collectionName string) *Us
 	}
 }
 
-func (rep *UserRepositoryMongo) CreateUser(ctx context.Context, user models.User) (*models.User, error) {
+func (rep *UserRepositoryMongo) CreateUser(ctx context.Context, user domain.User) (*domain.User, error) {
 	return &user, nil
 }
 
-func (rep *UserRepositoryMongo) GetUser(ctx context.Context, email, password string) (*models.User, error) {
-	var user models.User
+func (rep *UserRepositoryMongo) GetUser(ctx context.Context, email, password string) (*domain.User, error) {
+	var user domain.User
 	log.Print("Username: " + email + " password: " + password)
 	err := rep.db.FindOne(ctx, bson.M{"email": email, "password": password}).Decode(&user)
 	if err != nil {
@@ -36,8 +36,8 @@ func (rep *UserRepositoryMongo) GetUser(ctx context.Context, email, password str
 	return &user, nil
 }
 
-func (rep *UserRepositoryMongo) GetUserByID(ctx context.Context, id string) (*models.User, error) {
-	var user models.User
+func (rep *UserRepositoryMongo) GetUserByID(ctx context.Context, id string) (*domain.User, error) {
+	var user domain.User
 	objectId, err := primitive.ObjectIDFromHex(id)
 
 	if err != nil {
@@ -61,7 +61,7 @@ func (rep *UserRepositoryMongo) GetUserByID(ctx context.Context, id string) (*mo
 	return &user, nil
 }
 
-func (rep *UserRepositoryMongo) UpdateUser(ctx context.Context, user models.User) (*models.User, error) {
+func (rep *UserRepositoryMongo) UpdateUser(ctx context.Context, user domain.User) (*domain.User, error) {
 	filter := bson.M{"_id": user.ID}
 	update := bson.M{
 		"$set": bson.M{
@@ -79,7 +79,7 @@ func (rep *UserRepositoryMongo) UpdateUser(ctx context.Context, user models.User
 	findUpdateOptions := options.FindOneAndUpdateOptions{}
 	findUpdateOptions.SetReturnDocument(options.After)
 
-	var updatedUser models.User
+	var updatedUser domain.User
 	err := rep.db.FindOneAndUpdate(ctx, filter, update, &findUpdateOptions).Decode(&updatedUser)
 	if err != nil {
 		return nil, err
@@ -102,7 +102,7 @@ func (rep *UserRepositoryMongo) DeleteUser(ctx context.Context, id string) error
 	return err
 }
 
-func (rep *UserRepositoryMongo) ListUsers(ctx context.Context) ([]models.User, error) {
-	var users []models.User
+func (rep *UserRepositoryMongo) ListUsers(ctx context.Context) ([]domain.User, error) {
+	var users []domain.User
 	return users, nil
 }

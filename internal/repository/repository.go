@@ -3,61 +3,61 @@ package repository
 import (
 	"context"
 
-	"github.com/KirillTsvetkov/gofit/internal/models"
+	"github.com/KirillTsvetkov/gofit/internal/domain"
 	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type WorkoutRepository interface {
-	CreateWorkout(ctx context.Context, workout *models.Workout, user *models.User) (*models.Workout, error)
+	CreateWorkout(ctx context.Context, workout *domain.Workout, user *domain.User) (*domain.Workout, error)
 
-	GetWorkoutById(ctx context.Context, id string) (*models.Workout, error)
+	GetWorkoutById(ctx context.Context, id string) (*domain.Workout, error)
 
-	GetWorkoutByUserId(ctx context.Context, user *models.User) ([]models.Workout, error)
+	GetWorkoutByUserId(ctx context.Context, user *domain.User) ([]domain.Workout, error)
 
-	UpdateWorkout(ctx context.Context, workout models.Workout) (*models.Workout, error)
+	UpdateWorkout(ctx context.Context, workout domain.Workout) (*domain.Workout, error)
 
 	DeleteWorkout(ctx context.Context, id string) error
 
-	ListWorkouts(ctx context.Context, user *models.User) ([]models.Workout, error)
+	ListWorkouts(ctx context.Context, user *domain.User, pagination domain.PaginationQuery) ([]domain.Workout, int64, error)
 }
 
 type AchievementRepository interface {
-	CreateAchievement(ctx context.Context, achievement models.Achievement) (models.Achievement, error)
+	CreateAchievement(ctx context.Context, achievement domain.Achievement) (domain.Achievement, error)
 
-	GetAchievementById(ctx context.Context, id string) (*models.Achievement, error)
+	GetAchievementById(ctx context.Context, id string) (*domain.Achievement, error)
 
-	UpdateAchievement(ctx context.Context, achievement models.Achievement) (*models.Achievement, error)
+	UpdateAchievement(ctx context.Context, achievement domain.Achievement) (*domain.Achievement, error)
 
 	DeleteAchievement(ctx context.Context, id string) error
 
-	ListAchievementsByUserId(ctx context.Context, user *models.User) ([]models.Achievement, error)
+	ListAchievementsByUserId(ctx context.Context, user *domain.User) ([]domain.Achievement, error)
 }
 
 type GoalRepository interface {
-	CreateGoal(ctx context.Context, goal models.Goal) (*models.Goal, error)
+	CreateGoal(ctx context.Context, goal domain.Goal) (*domain.Goal, error)
 
-	GetGoalById(ctx context.Context, id string) (*models.Goal, error)
+	GetGoalById(ctx context.Context, id string) (*domain.Goal, error)
 
-	UpdateGoal(ctx context.Context, goal models.Goal) (*models.Goal, error)
+	UpdateGoal(ctx context.Context, goal domain.Goal) (*domain.Goal, error)
 
 	DeleteGoal(ctx context.Context, id string) error
 
-	ListGoalsByUserId(ctx context.Context, user *models.User) ([]models.Goal, error)
+	ListGoalsByUserId(ctx context.Context, user *domain.User) ([]domain.Goal, error)
 }
 
 type UserRepository interface {
-	CreateUser(ctx context.Context, user models.User) (*models.User, error)
+	CreateUser(ctx context.Context, user domain.User) (*domain.User, error)
 
-	GetUserByID(ctx context.Context, id string) (*models.User, error)
+	GetUserByID(ctx context.Context, id string) (*domain.User, error)
 
-	GetUser(ctx context.Context, username, password string) (*models.User, error)
+	GetUser(ctx context.Context, username, password string) (*domain.User, error)
 
-	UpdateUser(ctx context.Context, user models.User) (*models.User, error)
+	UpdateUser(ctx context.Context, user domain.User) (*domain.User, error)
 
 	DeleteUser(ctx context.Context, id string) error
 
-	ListUsers(ctx context.Context) ([]models.User, error)
+	ListUsers(ctx context.Context) ([]domain.User, error)
 }
 
 type Repository struct {

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/KirillTsvetkov/gofit/internal/models"
+	"github.com/KirillTsvetkov/gofit/internal/domain"
 
 	"github.com/dgrijalva/jwt-go"
 )
@@ -16,7 +16,7 @@ type Manager struct {
 
 type AuthClaims struct {
 	jwt.StandardClaims
-	User *models.User `json:"user"`
+	User *domain.User `json:"user"`
 }
 
 func NewManager(jwtKey string) (*Manager, error) {
@@ -27,7 +27,7 @@ func NewManager(jwtKey string) (*Manager, error) {
 	return &Manager{jwtKey: jwtKey}, nil
 }
 
-func (m *Manager) GenerateJWT(user *models.User, ttl time.Duration) (string, error) {
+func (m *Manager) GenerateJWT(user *domain.User, ttl time.Duration) (string, error) {
 	claims := AuthClaims{
 		User: user,
 		StandardClaims: jwt.StandardClaims{
@@ -44,7 +44,7 @@ func (m *Manager) GenerateJWT(user *models.User, ttl time.Duration) (string, err
 	return tokenString, nil
 }
 
-func (m *Manager) ValidateJWT(tokenString string) (*models.User, error) {
+func (m *Manager) ValidateJWT(tokenString string) (*domain.User, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &AuthClaims{}, func(token *jwt.Token) (i interface{}, err error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
