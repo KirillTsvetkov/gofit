@@ -86,15 +86,19 @@ func (rep *WorkoutRepositoryMongo) DeleteWorkout(ctx context.Context, id string)
 	return err
 }
 
-func (rep *WorkoutRepositoryMongo) ListWorkouts(ctx context.Context, user *domain.User, pagination domain.PaginationQuery) ([]domain.Workout, int64, error) {
-	filter := bson.M{"user_id": user.ID}
+func (rep *WorkoutRepositoryMongo) ListWorkouts(ctx context.Context, user *domain.User, query domain.GetWorkoutListQuery) ([]domain.Workout, int64, error) {
+	filter := bson.M{"$and": []bson.M{{"user_id": user.ID}}}
+
+	if err := filterDateQueries(query.FilterQuery.DateFrom, query.FilterQuery.DateTo, "date", filter); err != nil {
+		return nil, 0, err
+	}
 
 	totalCount, err := rep.db.CountDocuments(context.TODO(), filter)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fOpt := pagination.GetPaginationOpts()
+	fOpt := query.PaginationQuery.GetPaginationOpts()
 
 	cursor, err := rep.db.Find(ctx, filter, fOpt)
 	if err != nil {

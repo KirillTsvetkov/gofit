@@ -5,7 +5,7 @@ import (
 )
 
 type ExerciseType struct {
-	ID          primitive.ObjectID `bson:"_id,omitempty"`
+	ID          primitive.ObjectID `json:"id" bson:"_id"`
 	Title       string             `bson:"title"`
 	Description string             `bson:"description"`
 }

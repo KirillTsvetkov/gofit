@@ -23,7 +23,7 @@ func (s *WorkoutService) GetUserWorkout(ctx context.Context, user *domain.User, 
 	workouts, total, err := s.rep.WorkoutRepository.ListWorkouts(
 		ctx,
 		user,
-		query.PaginationQuery,
+		query,
 	)
 	if err != nil {
 		log.Fatal(err.Error())
@@ -36,11 +36,11 @@ func (s *WorkoutService) GetUserWorkout(ctx context.Context, user *domain.User, 
 	return workouts, total
 }
 
-func (s *WorkoutService) CreateWorkout(ctx context.Context, exercise []domain.Exercise, user *domain.User) *domain.Workout {
-
+func (s *WorkoutService) CreateWorkout(ctx context.Context, date time.Time, exercise []domain.Exercise, user *domain.User) *domain.Workout {
+	log.Print(exercise)
 	workout := &domain.Workout{
 		UserID:    user.ID,
-		Date:      time.Now(),
+		Date:      date,
 		Exercises: exercise,
 	}
 

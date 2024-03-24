@@ -84,18 +84,31 @@ func (rep *AchievementRepositoryMongo) DeleteAchievement(ctx context.Context, id
 	return err
 }
 
-func (rep *AchievementRepositoryMongo) ListAchievementsByUserId(ctx context.Context, user *domain.User) ([]domain.Achievement, error) {
+func (rep *AchievementRepositoryMongo) ListAchievements(ctx context.Context, user *domain.User, pagination domain.PaginationQuery) ([]domain.Achievement, int64, error) {
 	filter := bson.M{"user_id": user.ID}
-	cursor, err := rep.db.Find(ctx, filter)
+
+	totalCount, err := rep.db.CountDocuments(context.TODO(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fOpt := pagination.GetPaginationOpts()
+
+	cursor, err := rep.db.Find(ctx, filter, fOpt)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer cursor.Close(ctx)
 
 	var achievements []domain.Achievement
-	if err = cursor.All(ctx, &achievements); err != nil {
-		log.Fatal(err)
+	for cursor.Next(ctx) {
+		var achievement domain.Achievement
+		if err := cursor.Decode(&achievement); err != nil {
+			log.Println(err)
+		}
+
+		achievements = append(achievements, achievement)
 	}
 
-	return achievements, nil
+	return achievements, totalCount, nil
 }

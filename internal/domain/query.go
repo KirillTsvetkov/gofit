@@ -1,18 +1,12 @@
 package domain
 
-import "go.mongodb.org/mongo-driver/mongo/options"
+import (
+	"go.mongodb.org/mongo-driver/mongo/options"
+)
 
 type PaginationQuery struct {
 	Page  int64 `form:"page"`
 	Limit int64 `form:"limit"`
-}
-
-type SearchQuery struct {
-	Search string `form:"search"`
-}
-type GetWorkoutListQuery struct {
-	PaginationQuery
-	SearchQuery
 }
 
 func (p *PaginationQuery) GetSkip() *int64 {

@@ -2,9 +2,11 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"github.com/KirillTsvetkov/gofit/internal/domain"
 	"github.com/spf13/viper"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -19,7 +21,7 @@ type WorkoutRepository interface {
 
 	DeleteWorkout(ctx context.Context, id string) error
 
-	ListWorkouts(ctx context.Context, user *domain.User, pagination domain.PaginationQuery) ([]domain.Workout, int64, error)
+	ListWorkouts(ctx context.Context, user *domain.User, query domain.GetWorkoutListQuery) ([]domain.Workout, int64, error)
 }
 
 type AchievementRepository interface {
@@ -31,7 +33,7 @@ type AchievementRepository interface {
 
 	DeleteAchievement(ctx context.Context, id string) error
 
-	ListAchievementsByUserId(ctx context.Context, user *domain.User) ([]domain.Achievement, error)
+	ListAchievements(ctx context.Context, user *domain.User, pagination domain.PaginationQuery) ([]domain.Achievement, int64, error)
 }
 
 type GoalRepository interface {
@@ -74,4 +76,29 @@ func NewRepository(dbClient *mongo.Database) *Repository {
 		AchievementRepository: NewAchievementRepositoryMongo(dbClient, viper.GetString("mongo.achievement_collection")),
 		GoalRepository:        NewGoalRepositoryMongo(dbClient, viper.GetString("mongo.goal_collection")),
 	}
+}
+
+func filterDateQueries(dateFrom, dateTo time.Time, fieldName string, filter bson.M) error {
+	if !dateFrom.IsZero() && !dateTo.IsZero() {
+		filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
+			"$and": []bson.M{
+				{fieldName: bson.M{"$gte": dateFrom}},
+				{fieldName: bson.M{"$lte": dateTo}},
+			},
+		})
+	}
+
+	if !dateFrom.IsZero() && dateTo.IsZero() {
+		filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
+			fieldName: bson.M{"$gte": dateFrom},
+		})
+	}
+
+	if dateFrom.IsZero() && !dateTo.IsZero() {
+		filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
+			fieldName: bson.M{"$lte": dateTo},
+		})
+	}
+
+	return nil
 }
