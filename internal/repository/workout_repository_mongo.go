@@ -89,7 +89,7 @@ func (rep *WorkoutRepositoryMongo) DeleteWorkout(ctx context.Context, id string)
 func (rep *WorkoutRepositoryMongo) ListWorkouts(ctx context.Context, user *domain.User, query domain.GetWorkoutListQuery) ([]domain.Workout, int64, error) {
 	filter := bson.M{"$and": []bson.M{{"user_id": user.ID}}}
 
-	if err := filterDateQueries(query.FilterQuery.DateFrom, query.FilterQuery.DateTo, "date", filter); err != nil {
+	if err := filterDateQueries(query.WorkoutFilterQuery.DateFrom, query.WorkoutFilterQuery.DateTo, "date", filter); err != nil {
 		return nil, 0, err
 	}
 

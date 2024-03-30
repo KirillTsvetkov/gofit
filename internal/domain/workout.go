@@ -13,12 +13,12 @@ type Workout struct {
 	Date      time.Time          `bson:"date"`
 }
 
-type FilterQuery struct {
+type WorkoutFilterQuery struct {
 	DateFrom time.Time `form:"dateFrom" json:"dateFrom" time_format:"2006-01-02"`
 	DateTo   time.Time `form:"dateTo" json:"dateTo" time_format:"2006-01-02"`
 }
 
 type GetWorkoutListQuery struct {
 	PaginationQuery
-	FilterQuery
+	WorkoutFilterQuery
 }

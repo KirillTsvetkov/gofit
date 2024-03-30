@@ -87,3 +87,45 @@ func (rep *GoalRepositoryMongo) ListGoalsByUserId(ctx context.Context, user *dom
 	}
 	return goals, nil
 }
+
+func (rep *GoalRepositoryMongo) ListGoals(ctx context.Context, user *domain.User, query domain.GetGoalListQuery) ([]domain.Goal, int64, error) {
+	filter := bson.M{"user_id": user.ID}
+
+	if len(query.ExerciseTypes) != 0 {
+		filter["$and"] = []bson.M{}
+
+		filter["$and"] = append(filter["$and"].([]bson.M), bson.M{
+			"exercise.exerciseTypeId": bson.M{"$in": query.ExerciseTypes},
+		})
+		log.Print(filter)
+	}
+
+	if err := filterDateQueries(query.GoalFilterQuery.DateFrom, query.GoalFilterQuery.DateTo, "date", filter); err != nil {
+		return nil, 0, err
+	}
+
+	totalCount, err := rep.db.CountDocuments(context.TODO(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fOpt := query.PaginationQuery.GetPaginationOpts()
+
+	cursor, err := rep.db.Find(ctx, filter, fOpt)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cursor.Close(ctx)
+
+	var goals []domain.Goal
+	for cursor.Next(ctx) {
+		var goal domain.Goal
+		if err := cursor.Decode(&goal); err != nil {
+			log.Println(err)
+		}
+
+		goals = append(goals, goal)
+	}
+
+	return goals, totalCount, nil
+}

@@ -46,6 +46,8 @@ type GoalRepository interface {
 	DeleteGoal(ctx context.Context, id string) error
 
 	ListGoalsByUserId(ctx context.Context, user *domain.User) ([]domain.Goal, error)
+
+	ListGoals(ctx context.Context, user *domain.User, query domain.GetGoalListQuery) ([]domain.Goal, int64, error)
 }
 
 type UserRepository interface {
