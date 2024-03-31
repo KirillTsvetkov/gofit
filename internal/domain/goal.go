@@ -24,3 +24,8 @@ type GetGoalListQuery struct {
 	PaginationQuery
 	GoalFilterQuery
 }
+
+type UpdateGoalQuery struct {
+	Exercise Exercise  `json:"exercise"`
+	Date     time.Time `json:"date"`
+}

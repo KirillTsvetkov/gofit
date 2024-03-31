@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 	"time"
 
@@ -52,4 +53,59 @@ func (h *GoalHander) GetGoals(c *gin.Context) {
 	goals, total := h.service.GetUserGoals(c, user, request)
 	meta := domain.Meta{Page: *request.PaginationQuery.GetPage(), Limit: *request.PaginationQuery.GetLimit(), Total: total}
 	c.IndentedJSON(http.StatusOK, GoalsResponse{Data: goals, Meta: meta})
+}
+
+func (h *GoalHander) GetGoal(c *gin.Context) {
+	user := c.Value("user").(*domain.User)
+	id := c.Param("id")
+
+	if id == "" {
+		c.JSON(http.StatusBadRequest, "Empty id param")
+		return
+	}
+
+	objectId, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "Invalid id")
+		return
+	}
+	log.Print("before get goal")
+	goal, err := h.service.GetGoal(c, user, objectId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	c.IndentedJSON(http.StatusOK, goal)
+}
+
+func (h *GoalHander) UpdateGoal(c *gin.Context) {
+	user := c.Value("user").(*domain.User)
+	id := c.Param("id")
+
+	if id == "" {
+		c.JSON(http.StatusBadRequest, "Empty id param")
+		return
+	}
+
+	objectId, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "Invalid id")
+		return
+	}
+
+	var inp domain.UpdateGoalQuery
+	if err := c.BindJSON(&inp); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
+		return
+	}
+
+	goal, err := h.service.UpdateGoal(c, user, objectId, inp)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	c.IndentedJSON(http.StatusOK, goal)
 }

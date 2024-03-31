@@ -15,5 +15,7 @@ func (r *GoalRouter) RegisterRoutes(router *gin.Engine, rep *repository.Reposito
 	goals := router.Group("/goals", authMiddleware)
 	{
 		goals.GET("", h.GetGoals)
+		goals.GET("/:id", h.GetGoal)
+		goals.PUT("/:id", h.UpdateGoal)
 	}
 }

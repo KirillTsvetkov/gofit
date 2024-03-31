@@ -7,6 +7,7 @@ import (
 	"github.com/KirillTsvetkov/gofit/internal/domain"
 	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -39,11 +40,11 @@ type AchievementRepository interface {
 type GoalRepository interface {
 	CreateGoal(ctx context.Context, goal domain.Goal) (*domain.Goal, error)
 
-	GetGoalById(ctx context.Context, id string) (*domain.Goal, error)
+	GetGoalById(ctx context.Context, user *domain.User, id primitive.ObjectID) (domain.Goal, error)
 
-	UpdateGoal(ctx context.Context, goal domain.Goal) (*domain.Goal, error)
+	UpdateGoal(ctx context.Context, goal domain.Goal, query domain.UpdateGoalQuery) (domain.Goal, error)
 
-	DeleteGoal(ctx context.Context, id string) error
+	DeleteGoal(ctx context.Context, id primitive.ObjectID) error
 
 	ListGoalsByUserId(ctx context.Context, user *domain.User) ([]domain.Goal, error)
 

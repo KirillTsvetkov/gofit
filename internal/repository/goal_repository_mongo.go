@@ -31,12 +31,17 @@ func (rep *GoalRepositoryMongo) CreateGoal(ctx context.Context, goal domain.Goal
 	return &goal, nil
 }
 
-func (rep *GoalRepositoryMongo) GetGoalById(ctx context.Context, id string) (*domain.Goal, error) {
+func (rep *GoalRepositoryMongo) GetGoalById(ctx context.Context, user *domain.User, id primitive.ObjectID) (domain.Goal, error) {
 	var goal domain.Goal
-	return &goal, nil
+	filter := bson.M{"_id": id, "user_id": user.ID}
+	if err := rep.db.FindOne(ctx, filter).Decode(&goal); err != nil {
+		log.Println(err)
+		return goal, err
+	}
+	return goal, nil
 }
 
-func (rep *GoalRepositoryMongo) UpdateGoal(ctx context.Context, goal domain.Goal) (*domain.Goal, error) {
+func (rep *GoalRepositoryMongo) UpdateGoal(ctx context.Context, goal domain.Goal, query domain.UpdateGoalQuery) (domain.Goal, error) {
 	filter := bson.M{"_id": goal.ID}
 	update := bson.M{
 		"$set": bson.M{
@@ -44,11 +49,13 @@ func (rep *GoalRepositoryMongo) UpdateGoal(ctx context.Context, goal domain.Goal
 		},
 	}
 
-	if goal.UserID != primitive.NilObjectID {
-		update["$set"].(bson.M)["user_id"] = goal.UserID
+	if !query.Date.IsZero() {
+		update["$set"].(bson.M)["date"] = query.Date
 	}
 
-	update["$set"].(bson.M)["status"] = goal.Status
+	if query.Exercise != (domain.Exercise{}) {
+		update["$set"].(bson.M)["exercise"] = query.Exercise
+	}
 
 	findUpdateOptions := options.FindOneAndUpdateOptions{}
 	findUpdateOptions.SetReturnDocument(options.After)
@@ -56,20 +63,14 @@ func (rep *GoalRepositoryMongo) UpdateGoal(ctx context.Context, goal domain.Goal
 	var updatedGoal domain.Goal
 	err := rep.db.FindOneAndUpdate(ctx, filter, update, &findUpdateOptions).Decode(&updatedGoal)
 	if err != nil {
-		return nil, err
+		return updatedGoal, err
 	}
 
-	return &updatedGoal, nil
+	return updatedGoal, nil
 }
 
-func (rep *GoalRepositoryMongo) DeleteGoal(ctx context.Context, id string) error {
-	objectId, err := primitive.ObjectIDFromHex(id)
-
-	if err != nil {
-		log.Println("Invalid id")
-	}
-
-	_, err = rep.db.DeleteOne(ctx, bson.M{"_id": objectId})
+func (rep *GoalRepositoryMongo) DeleteGoal(ctx context.Context, id primitive.ObjectID) error {
+	_, err := rep.db.DeleteOne(ctx, bson.M{"_id": id})
 	return err
 }
 
