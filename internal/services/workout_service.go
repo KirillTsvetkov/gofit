@@ -7,6 +7,7 @@ import (
 
 	"github.com/KirillTsvetkov/gofit/internal/domain"
 	"github.com/KirillTsvetkov/gofit/internal/repository"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type WorkoutService struct {
@@ -37,7 +38,6 @@ func (s *WorkoutService) GetUserWorkout(ctx context.Context, user *domain.User, 
 }
 
 func (s *WorkoutService) CreateWorkout(ctx context.Context, date time.Time, exercise []domain.Exercise, user *domain.User) *domain.Workout {
-	log.Print(exercise)
 	workout := &domain.Workout{
 		UserID:    user.ID,
 		Date:      date,
@@ -54,4 +54,24 @@ func (s *WorkoutService) CreateWorkout(ctx context.Context, date time.Time, exer
 		log.Fatal(err.Error())
 	}
 	return result
+}
+
+func (s *WorkoutService) UpdateWorkout(ctx context.Context, user *domain.User, id primitive.ObjectID, query domain.UpdateWorkoutQuery) (domain.Workout, error) {
+	var workout domain.Workout
+	workout, err := s.rep.WorkoutRepository.GetWorkoutById(ctx, user, id)
+	if err != nil {
+		return workout, err
+	}
+
+	updatedWorkout, err := s.rep.WorkoutRepository.UpdateWorkout(
+		ctx,
+		workout,
+		query,
+	)
+
+	if err != nil {
+		return workout, err
+	}
+
+	return updatedWorkout, err
 }

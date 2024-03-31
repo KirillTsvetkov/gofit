@@ -31,36 +31,32 @@ func (rep *WorkoutRepositoryMongo) CreateWorkout(ctx context.Context, workout *d
 	return workout, nil
 }
 
-func (rep *WorkoutRepositoryMongo) GetWorkoutById(ctx context.Context, id string) (*domain.Workout, error) {
-	workout := new(domain.Workout)
+func (rep *WorkoutRepositoryMongo) GetWorkoutById(ctx context.Context, user *domain.User, id primitive.ObjectID) (domain.Workout, error) {
+	var workout domain.Workout
 	err := rep.db.FindOne(ctx, bson.M{
 		"ID": id,
-	}).Decode(workout)
+	}).Decode(&workout)
 
 	if err != nil {
-		return nil, err
+		return workout, err
 	}
 	return workout, nil
 }
 
-func (rep *WorkoutRepositoryMongo) GetWorkoutByUserId(ctx context.Context, user *domain.User) ([]domain.Workout, error) {
-	var workout []domain.Workout
-	err := rep.db.FindOne(ctx, bson.M{
-		"user_id": user.ID,
-	}).Decode(workout)
-
-	if err != nil {
-		return nil, err
-	}
-	return workout, nil
-}
-
-func (rep *WorkoutRepositoryMongo) UpdateWorkout(ctx context.Context, workout domain.Workout) (*domain.Workout, error) {
+func (rep *WorkoutRepositoryMongo) UpdateWorkout(ctx context.Context, workout domain.Workout, query domain.UpdateWorkoutQuery) (domain.Workout, error) {
 	filter := bson.M{"_id": workout.ID}
 	update := bson.M{
 		"$set": bson.M{
 			"updated_at": time.Now(),
 		},
+	}
+
+	if !query.Date.IsZero() {
+		update["$set"].(bson.M)["date"] = query.Date
+	}
+
+	if len(query.Exercises) > 0 {
+		update["$set"].(bson.M)["exercises"] = query.Exercises
 	}
 
 	findUpdateOptions := options.FindOneAndUpdateOptions{}
@@ -69,20 +65,14 @@ func (rep *WorkoutRepositoryMongo) UpdateWorkout(ctx context.Context, workout do
 	var updatedWorkout domain.Workout
 	err := rep.db.FindOneAndUpdate(ctx, filter, update, &findUpdateOptions).Decode(&updatedWorkout)
 	if err != nil {
-		return nil, err
+		return updatedWorkout, err
 	}
 
-	return &updatedWorkout, nil
+	return updatedWorkout, nil
 }
 
-func (rep *WorkoutRepositoryMongo) DeleteWorkout(ctx context.Context, id string) error {
-	objectId, err := primitive.ObjectIDFromHex(id)
-
-	if err != nil {
-		log.Println("Invalid id")
-	}
-
-	_, err = rep.db.DeleteOne(ctx, bson.M{"_id": objectId})
+func (rep *WorkoutRepositoryMongo) DeleteWorkout(ctx context.Context, id primitive.ObjectID) error {
+	_, err := rep.db.DeleteOne(ctx, bson.M{"_id": id})
 	return err
 }
 

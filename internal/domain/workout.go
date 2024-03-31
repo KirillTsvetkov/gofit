@@ -22,3 +22,8 @@ type GetWorkoutListQuery struct {
 	PaginationQuery
 	WorkoutFilterQuery
 }
+
+type UpdateWorkoutQuery struct {
+	Exercises []Exercise `bson:"exercises"`
+	Date      time.Time  `bson:"date"`
+}

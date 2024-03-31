@@ -14,13 +14,11 @@ import (
 type WorkoutRepository interface {
 	CreateWorkout(ctx context.Context, workout *domain.Workout, user *domain.User) (*domain.Workout, error)
 
-	GetWorkoutById(ctx context.Context, id string) (*domain.Workout, error)
+	GetWorkoutById(ctx context.Context, user *domain.User, id primitive.ObjectID) (domain.Workout, error)
 
-	GetWorkoutByUserId(ctx context.Context, user *domain.User) ([]domain.Workout, error)
+	UpdateWorkout(ctx context.Context, workout domain.Workout, query domain.UpdateWorkoutQuery) (domain.Workout, error)
 
-	UpdateWorkout(ctx context.Context, workout domain.Workout) (*domain.Workout, error)
-
-	DeleteWorkout(ctx context.Context, id string) error
+	DeleteWorkout(ctx context.Context, id primitive.ObjectID) error
 
 	ListWorkouts(ctx context.Context, user *domain.User, query domain.GetWorkoutListQuery) ([]domain.Workout, int64, error)
 }

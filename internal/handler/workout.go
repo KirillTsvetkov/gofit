@@ -9,6 +9,7 @@ import (
 	"github.com/KirillTsvetkov/gofit/internal/repository"
 	"github.com/KirillTsvetkov/gofit/internal/services"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type WorkoutHandler struct {
@@ -61,4 +62,35 @@ func (h *WorkoutHandler) CreateWorkout(c *gin.Context) {
 
 	workouts := h.service.CreateWorkout(c, request.Date, request.Exercises, user)
 	c.IndentedJSON(http.StatusOK, workouts)
+}
+
+func (h *WorkoutHandler) UpdateWorkout(c *gin.Context) {
+	user := c.Value("user").(*domain.User)
+	id := c.Param("id")
+
+	if id == "" {
+		c.JSON(http.StatusBadRequest, "Empty id param")
+		return
+	}
+
+	objectId, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "Invalid id")
+		return
+	}
+
+	var request domain.UpdateWorkoutQuery
+
+	if err := c.BindJSON(request); err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	goal, err := h.service.UpdateWorkout(c, user, objectId, request)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	c.IndentedJSON(http.StatusOK, goal)
 }

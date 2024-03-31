@@ -95,14 +95,13 @@ func (h *GoalHander) UpdateGoal(c *gin.Context) {
 		return
 	}
 
-	var inp domain.UpdateGoalQuery
-	if err := c.BindJSON(&inp); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-
+	var request domain.UpdateGoalQuery
+	if err := c.BindJSON(&request); err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
-	goal, err := h.service.UpdateGoal(c, user, objectId, inp)
+	goal, err := h.service.UpdateGoal(c, user, objectId, request)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
